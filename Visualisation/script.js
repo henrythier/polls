@@ -152,4 +152,13 @@ $(document).ready(function() {
   $.get('https://raw.githubusercontent.com/henrythier/polls/master/Data/normalised/semi_month.csv', get_data)
   // Read data file and create a chart
 
+  $(function() {
+    $('input[name="daterange"]').daterangepicker({
+      opens: 'left'
+    }, function(start_input, end_input, label) {
+      start_date = new Date(start_input.format('YYYY-MM-DD'));
+      end_date = new Date(end_input.format('YYYY-MM-DD'))
+      render_chart(data)
+    });
+  });
   });

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
 
   <!-- Load jQuery -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
 
   <!-- Load Chart.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
@@ -15,6 +15,9 @@
 
   <!-- Load PapaParse to read csv files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 </head>
 
 <body>
@@ -22,13 +25,14 @@
   <div>
     <canvas id="chart-container" style="height: 400px; width: 100%"></canvas>
   </div>
-
+  <div style="font-family: Helvetica; color: #333; padding: 1em 2em; font-size: 12px">
+      <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
+  </div>
   <p style="font-family: Helvetica; color: #333; padding: 1em 2em; font-size: 12px">
     Source: Wahlrecht.de
     <br>
     <a href="https://raw.githubusercontent.com/henrythier/polls/master/Data/normalised/semi_month.csv">Download data</a> powering this visualization.
   </p>
-
   <script src="script.js"></script>
 </body>
 
