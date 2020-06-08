@@ -39,7 +39,7 @@ This repository provides data on German Parliament election results and polls fr
   - Yougov 
   - Allensbach 
   - GMS 
-  - Election 
+  - Election: actual election results 
 
 <br>
 
