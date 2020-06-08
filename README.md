@@ -1,6 +1,8 @@
 # Polls
 This repository provides data on German Parliament election results and polls from major opinion polling companies since 1949. The data is taken from [Wahlrecht](https://www.wahlrecht.de/) and transformed into a consistent format.
+
 <br>
+
 <b>Data:</b>
 - Format
   - Date: YYYY-MM-DD
