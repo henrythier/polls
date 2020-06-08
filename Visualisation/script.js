@@ -29,9 +29,12 @@ var party_colors = {
     'Other': [85,85,85]
   }
 
-var start_date = new Date('2010-01-01')
-var end_date = new Date('2020-08-01')
+var start_date = new Date(Date.now())
+var end_date = new Date(Date.now())
+start_date.setMonth(end_date.getMonth() - 6)
 var data
+var ctx = document.getElementById('chart-container').getContext('2d');
+var chartobject
 
 function to_rgba(rgb, opacity) {
   str = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')'
@@ -44,6 +47,51 @@ function start_index(x) {
 
 function end_index(x) {
   return x >= end_date
+}
+
+function to_date_string(d) {
+  month = '' + (d.getMonth() + 1),
+  day = '' + d.getDate(),
+  year = d.getFullYear()
+
+  if (month.length < 2)
+        month = '0' + month;
+  if (day.length < 2)
+      day = '0' + day;
+
+  console.log([month, day, year].join('/'))
+  return [month, day, year].join('/');
+}
+
+function update_chart(data) {
+  var timeLabels = data.slice(1).map(function(row) { return row[0]; }).map(date => new Date(date));
+  var start = timeLabels.findIndex(start_index)
+  var end = timeLabels.findIndex(end_index)
+  var timeLabels = timeLabels.slice(start, end)
+  console.log(timeLabels)
+
+  var datasets = [];
+  for (var i = 1; i < data[0].length; i++) {
+    datasets.push(
+      {
+        label: data[0][i], // column name
+        data: data.slice(1).map(function(row) {return row[i]}).slice(start, end), // data in that column
+        fill: false, // `true` for area charts, `false` for regular line charts
+        borderColor: to_rgba(party_colors[data[0][i]], 0.8),
+        backgroundColor: to_rgba(party_colors[data[0][i]], 0.5),
+        pointBackgroundColor: to_rgba(party_colors[data[0][i]], 0.5),
+        pointBorderColor: to_rgba(party_colors[data[0][i]], 1),
+        pointHoverBackgroundColor: to_rgba(party_colors[data[0][i]], 0.8),
+        pointHoverBorderColor: to_rgba(party_colors[data[0][i]], 1),
+      }
+    )
+  }
+
+  chartobject.data['datasets'] = datasets
+  chartobject.data['timeLabels'] = timeLabels
+
+  chartobject.config.data.labels = timeLabels
+  chartobject.update()
 }
 
 function render_chart(data) {
@@ -74,7 +122,7 @@ function render_chart(data) {
   // Get container for the chart
   var ctx = document.getElementById('chart-container').getContext('2d');
 
-  new Chart(ctx, {
+  chartobject = new Chart(ctx, {
     type: 'line',
 
     data: {
@@ -103,6 +151,9 @@ function render_chart(data) {
           },
           ticks: {
             callback: function(value, index, values) {
+              if (value instanceof Date) {
+                return value.toISOString().split('T')[0]
+              }
               return value.toLocaleString();
             }
           }
@@ -133,11 +184,6 @@ function render_chart(data) {
           }
         }
       },
-      plugins: {
-        colorschemes: {
-          scheme: 'brewer.Paired12'
-        }
-      }
     }
   })
 }
@@ -154,11 +200,18 @@ $(document).ready(function() {
 
   $(function() {
     $('input[name="daterange"]').daterangepicker({
-      opens: 'left'
+      opens: 'center',
+      showDropdowns: true,
+      startDate: start_date,
+      endDate: end_date,
+      locale: {
+        format: 'DD-MM-YYYY'
+      },
+      autoApply: true,
     }, function(start_input, end_input, label) {
       start_date = new Date(start_input.format('YYYY-MM-DD'));
       end_date = new Date(end_input.format('YYYY-MM-DD'))
-      render_chart(data)
+      update_chart(data)
     });
   });
   });
