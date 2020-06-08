@@ -31,6 +31,7 @@ var party_colors = {
 
 var start_date = new Date('2010-01-01')
 var end_date = new Date('2020-08-01')
+var data
 
 function to_rgba(rgb, opacity) {
   str = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')'
@@ -45,110 +46,110 @@ function end_index(x) {
   return x >= end_date
 }
 
-function render_chart() {
+function render_chart(data) {
+  var timeLabels = data.slice(1).map(function(row) { return row[0]; }).map(date => new Date(date));
+  var start = timeLabels.findIndex(start_index)
+  var end = timeLabels.findIndex(end_index)
+  var timeLabels = timeLabels.slice(start, end)
+  console.log(start)
+  console.log(end)
 
+  var datasets = [];
+  for (var i = 1; i < data[0].length; i++) {
+    datasets.push(
+      {
+        label: data[0][i], // column name
+        data: data.slice(1).map(function(row) {return row[i]}).slice(start, end), // data in that column
+        fill: false, // `true` for area charts, `false` for regular line charts
+        borderColor: to_rgba(party_colors[data[0][i]], 0.8),
+        backgroundColor: to_rgba(party_colors[data[0][i]], 0.5),
+        pointBackgroundColor: to_rgba(party_colors[data[0][i]], 0.5),
+        pointBorderColor: to_rgba(party_colors[data[0][i]], 1),
+        pointHoverBackgroundColor: to_rgba(party_colors[data[0][i]], 0.8),
+        pointHoverBorderColor: to_rgba(party_colors[data[0][i]], 1),
+      }
+    )
+  }
+
+  // Get container for the chart
+  var ctx = document.getElementById('chart-container').getContext('2d');
+
+  new Chart(ctx, {
+    type: 'line',
+
+    data: {
+      labels: timeLabels,
+      datasets: datasets,
+    },
+
+    options: {
+      title: {
+        display: true,
+        text: TITLE,
+        fontSize: 14,
+      },
+      legend: {
+        display: SHOW_LEGEND,
+      },
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: [{
+          scaleLabel: {
+            display: X_AXIS !== '',
+            labelString: X_AXIS
+          },
+          gridLines: {
+            display: SHOW_GRID,
+          },
+          ticks: {
+            callback: function(value, index, values) {
+              return value.toLocaleString();
+            }
+          }
+        }],
+        yAxes: [{
+          beginAtZero: true,
+          scaleLabel: {
+            display: Y_AXIS !== '',
+            labelString: Y_AXIS
+          },
+          gridLines: {
+            display: SHOW_GRID,
+          },
+          ticks: {
+            beginAtZero: true,
+            callback: function(value, index, values) {
+              return value.toLocaleString()
+            }
+          }
+        }]
+      },
+      tooltips: {
+        displayColors: false,
+        callbacks: {
+          label: function(tooltipItem, all) {
+            return all.datasets[tooltipItem.datasetIndex].label
+              + ': ' + tooltipItem.yLabel.toLocaleString();
+          }
+        }
+      },
+      plugins: {
+        colorschemes: {
+          scheme: 'brewer.Paired12'
+        }
+      }
+    }
+  })
+}
+
+function get_data(csvString) {
+  data = Papa.parse(csvString).data;
+  render_chart(data)
 }
 
 $(document).ready(function() {
 
+  $.get('https://raw.githubusercontent.com/henrythier/polls/master/Data/normalised/semi_month.csv', get_data)
   // Read data file and create a chart
-  $.get('https://raw.githubusercontent.com/henrythier/polls/master/Data/normalised/semi_month.csv', function(csvString) {
-
-    var data = Papa.parse(csvString).data;
-    var timeLabels = data.slice(1).map(function(row) { return row[0]; }).map(date => new Date(date));
-    var start = timeLabels.findIndex(start_index)
-    var end = timeLabels.findIndex(end_index)
-    var timeLabels = timeLabels.slice(start, end)
-    console.log(start)
-    console.log(end)
-
-    var datasets = [];
-    for (var i = 1; i < data[0].length; i++) {
-      datasets.push(
-        {
-          label: data[0][i], // column name
-          data: data.slice(1).map(function(row) {return row[i]}).slice(start, end), // data in that column
-          fill: false, // `true` for area charts, `false` for regular line charts
-          borderColor: to_rgba(party_colors[data[0][i]], 0.8),
-          backgroundColor: to_rgba(party_colors[data[0][i]], 0.5),
-          pointBackgroundColor: to_rgba(party_colors[data[0][i]], 0.5),
-          pointBorderColor: to_rgba(party_colors[data[0][i]], 1),
-          pointHoverBackgroundColor: to_rgba(party_colors[data[0][i]], 0.8),
-          pointHoverBorderColor: to_rgba(party_colors[data[0][i]], 1),
-        }
-      )
-    }
-
-    // Get container for the chart
-    var ctx = document.getElementById('chart-container').getContext('2d');
-
-    new Chart(ctx, {
-      type: 'line',
-
-      data: {
-        labels: timeLabels,
-        datasets: datasets,
-      },
-
-      options: {
-        title: {
-          display: true,
-          text: TITLE,
-          fontSize: 14,
-        },
-        legend: {
-          display: SHOW_LEGEND,
-        },
-        maintainAspectRatio: false,
-        scales: {
-          xAxes: [{
-            scaleLabel: {
-              display: X_AXIS !== '',
-              labelString: X_AXIS
-            },
-            gridLines: {
-              display: SHOW_GRID,
-            },
-            ticks: {
-              callback: function(value, index, values) {
-                return value.toLocaleString();
-              }
-            }
-          }],
-          yAxes: [{
-            beginAtZero: true,
-            scaleLabel: {
-              display: Y_AXIS !== '',
-              labelString: Y_AXIS
-            },
-            gridLines: {
-              display: SHOW_GRID,
-            },
-            ticks: {
-              beginAtZero: true,
-              callback: function(value, index, values) {
-                return value.toLocaleString()
-              }
-            }
-          }]
-        },
-        tooltips: {
-          displayColors: false,
-          callbacks: {
-            label: function(tooltipItem, all) {
-              return all.datasets[tooltipItem.datasetIndex].label
-                + ': ' + tooltipItem.yLabel.toLocaleString();
-            }
-          }
-        },
-        plugins: {
-          colorschemes: {
-            scheme: 'brewer.Paired12'
-          }
-        }
-      }
-    });
 
   });
-
-});
