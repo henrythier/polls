@@ -34,6 +34,10 @@ function to_rgba(rgb, opacity) {
   return str;   // The function returns the product of p1 and p2
 }
 
+function to_two_decimals(x) {
+  return x.toFixed(2);
+}
+
 $(document).ready(function() {
 
   // Read data file and create a chart
@@ -105,7 +109,7 @@ $(document).ready(function() {
               display: SHOW_GRID,
             },
             ticks: {
-              beginAtZero: BEGIN_AT_ZERO,
+              beginAtZero: true,
               callback: function(value, index, values) {
                 return value.toLocaleString()
               }
