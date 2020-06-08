@@ -29,13 +29,24 @@ var party_colors = {
     'Other': [85,85,85]
   }
 
+var start_date = new Date('2010-01-01')
+var end_date = new Date('2020-08-01')
+
 function to_rgba(rgb, opacity) {
   str = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')'
-  return str;   // The function returns the product of p1 and p2
+  return str;
 }
 
-function to_two_decimals(x) {
-  return x.toFixed(2);
+function start_index(x) {
+  return x >= start_date
+}
+
+function end_index(x) {
+  return x >= end_date
+}
+
+function render_chart() {
+
 }
 
 $(document).ready(function() {
@@ -44,14 +55,19 @@ $(document).ready(function() {
   $.get('https://raw.githubusercontent.com/henrythier/polls/master/Data/normalised/semi_month.csv', function(csvString) {
 
     var data = Papa.parse(csvString).data;
-    var timeLabels = data.slice(1).map(function(row) { return row[0]; });
+    var timeLabels = data.slice(1).map(function(row) { return row[0]; }).map(date => new Date(date));
+    var start = timeLabels.findIndex(start_index)
+    var end = timeLabels.findIndex(end_index)
+    var timeLabels = timeLabels.slice(start, end)
+    console.log(start)
+    console.log(end)
 
     var datasets = [];
     for (var i = 1; i < data[0].length; i++) {
       datasets.push(
         {
           label: data[0][i], // column name
-          data: data.slice(1).map(function(row) {return row[i]}), // data in that column
+          data: data.slice(1).map(function(row) {return row[i]}).slice(start, end), // data in that column
           fill: false, // `true` for area charts, `false` for regular line charts
           borderColor: to_rgba(party_colors[data[0][i]], 0.8),
           backgroundColor: to_rgba(party_colors[data[0][i]], 0.5),
