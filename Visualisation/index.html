@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-  <title>Semi Month</title>
+  <title>Poll Data</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <!-- Load jQuery -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
 
@@ -26,8 +26,20 @@
     <canvas id="chart-container" style="height: 400px; width: 100%"></canvas>
   </div>
   <div style="font-family: Helvetica; color: #333; padding: 1em 2em; font-size: 12px">
-    <h2>Pick date range:</h2>
-      <input type="text" name="daterange"/>
+    <div class="row">
+      <div class="col-sm-12 mx-auto">
+        <div class="">
+          <h4>Pick date range:</h4>
+            <input type="text" name="daterange"
+            class="text-center"
+            style="width: 12em;
+                  font-size: 1.5em;
+                  font-weight: 200;
+                  border-radius: 4px;
+                  border-width: thin;"/>
+        </div>
+      </div>
+    </div>
   </div>
   <p style="font-family: Helvetica; color: #333; padding: 1em 2em; font-size: 12px">
     Source: Wahlrecht.de

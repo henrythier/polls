@@ -152,7 +152,14 @@ function render_chart(data) {
           ticks: {
             callback: function(value, index, values) {
               if (value instanceof Date) {
-                return value.toISOString().split('T')[0]
+                x = value.toISOString().split('T')[0].split('-')
+                if (x[1].length < 2){
+                  x[1] = '0' + x[1]
+                }
+                if (x[2].length < 2) {
+                  x[2] = '0' + x[2]
+                }
+                return x[2] + '.' + x[1] + '.' + x[0]
               }
               return value.toLocaleString();
             }
@@ -205,7 +212,7 @@ $(document).ready(function() {
       startDate: start_date,
       endDate: end_date,
       locale: {
-        format: 'DD-MM-YYYY'
+        format: 'DD.MM.YYYY'
       },
       autoApply: true,
     }, function(start_input, end_input, label) {
